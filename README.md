@@ -25,3 +25,13 @@ Use the ORIGINAL backup as patch input, not the manually patched clone. The patc
 ## Previous packaging fixes
 
 Preserve original compiled resources and META-INF/services metadata. Rebuilding decoded base resources alone previously replaced cross-split image references with @null. Dropping META-INF/services previously broke the Kotlin Main dispatcher.
+
+## Popup and shortcut patch
+
+Select **Nhạc Local - compact shortcuts and popup corners**. It depends on the combined Nhạc Local patch. It hides the local shortcut RecyclerView and makes its adapter report zero items. Popup clipping, blur and shadow use 20dp circular corners with zero smoothing; the system animation-level setting is untouched. These changes were manually tested in a separately rebuilt APK; this Morphe translation still requires compilation and runtime validation.
+
+## GitHub Actions
+
+`Build Morphe patches` runs on main/dev pushes, pull requests and manual dispatch. On success, download the `.mpp` bundle and SHA256SUMS from the run artifacts. Logs are uploaded even on failure. This workflow builds a patch bundle, not a patched Music APK; it never uploads phone backups, signing keys or copyrighted APKs.
+
+GitHub Packages authentication uses the repository token by default. If Morphe registry access is denied, configure Actions secrets MORPHE_PACKAGES_TOKEN (read:packages) and MORPHE_PACKAGES_USER for its owner. A token does not fix a nonexistent plugin version: plugin-resolution errors must be checked against the registry/template as well. Release automation is manual-only to avoid publishing unvalidated draft bundles automatically.
