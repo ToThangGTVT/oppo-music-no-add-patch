@@ -18,7 +18,7 @@ private object AdPlacement : Fingerprint(
 val disableMusicAds = bytecodePatch(
     name = "Disable HeyTap Music ad placements",
     description = "Return no advertising placement from the central placement lookup. Experimental, exact version only.",
-    default = true
+    default = false
 ) {
     compatibleWith(Compatibility(name = "HeyTap Music", packageName = "com.heytap.music", apkFileType = ApkFileType.APK, appIconColor = 0xFF0045, targets = listOf(AppTarget(version = "48.15.1.60.5_007d1ba_261019"))))
     execute {
