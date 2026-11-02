@@ -35,3 +35,7 @@ Select **Nhạc Local - compact shortcuts and popup corners**. It depends on the
 `Build Morphe patches` runs on main/dev pushes, pull requests and manual dispatch. On success, download the `.mpp` bundle and SHA256SUMS from the run artifacts. Logs are uploaded even on failure. This workflow builds a patch bundle, not a patched Music APK; it never uploads phone backups, signing keys or copyrighted APKs.
 
 GitHub Packages authentication uses the repository token by default. If Morphe registry access is denied, configure Actions secrets MORPHE_PACKAGES_TOKEN (read:packages) and MORPHE_PACKAGES_USER for its owner. A token does not fix a nonexistent plugin version: plugin-resolution errors must be checked against the registry/template as well. Release automation is manual-only to avoid publishing unvalidated draft bundles automatically.
+
+## Localized app name
+
+The manifest uses @string/app_name. Vietnamese is Nhạc Local; English is Local Music. Additional translations cover French, German, Spanish, Portuguese, Italian, Russian, Japanese, Korean, Chinese, Thai, Indonesian, Malay and Turkish. Other languages fall back to Local Music. Existing localized app_name entries are updated to prevent the old name overriding the patch. Widget and license-screen labels are preserved.

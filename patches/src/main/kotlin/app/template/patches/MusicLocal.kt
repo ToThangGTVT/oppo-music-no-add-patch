@@ -47,8 +47,36 @@ private val localManifest = resourcePatch {
                     if (!isClass) attr.nodeValue = attr.nodeValue.replace(OLD,NEW)
                 }
             }
-            if (node.tagName == "application" || node.hasAttributeNS(NS,"label"))
-                node.setAttributeNS(NS,"android:label","Nhạc Local")
+            if (node.tagName == "application" || node.getAttributeNS(NS,"label") == "@string/app_name")
+                node.setAttributeNS(NS,"android:label","@string/app_name")
+        }
+        // Update every existing locale so an old localized "Music" label cannot override us.
+        val localizedNames = mapOf(
+            "vi" to "Nhạc Local", "en" to "Local Music", "fr" to "Musique locale",
+            "de" to "Lokale Musik", "es" to "Música local", "pt" to "Música local",
+            "it" to "Musica locale", "ru" to "Локальная музыка", "ja" to "ローカル音楽",
+            "ko" to "로컬 음악", "zh" to "本地音乐", "th" to "เพลงในเครื่อง",
+            "id" to "Musik Lokal", "ms" to "Muzik Tempatan", "tr" to "Yerel Müzik"
+        )
+        listDecodableFiles("res/**/strings.xml").forEach { path ->
+            val directory = path.split('/')[1]
+            val language = directory.removePrefix("values-").substringBefore('-').substringBefore('+')
+            val stringsFile = get(path)
+            val stringsDoc = factory.newDocumentBuilder().parse(stringsFile)
+            val strings = stringsDoc.getElementsByTagName("string")
+            var changed = false
+            for (i in 0 until strings.length) {
+                val entry = strings.item(i) as org.w3c.dom.Element
+                if (entry.getAttribute("name") == "app_name") {
+                    entry.textContent = when {
+                        directory.contains("zh-rTW") || directory.contains("zh-rHK") -> "本機音樂"
+                        else -> localizedNames[language] ?: "Local Music"
+                    }
+                    changed = true
+                }
+            }
+            if (changed) TransformerFactory.newInstance().newTransformer()
+                .transform(DOMSource(stringsDoc),StreamResult(stringsFile))
         }
         remove.forEach { it.parentNode.removeChild(it) }
         TransformerFactory.newInstance().newTransformer().transform(DOMSource(doc),StreamResult(file))
